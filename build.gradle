@@ -1,6 +1,5 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
+apply plugin: 'jacoco'
 
 group 'com.universy'
 version '1.0'
@@ -29,3 +28,17 @@ jar {
         )
     }
 }
+
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
+build.dependsOn jacocoTestReport
+jacocoTestReport.mustRunAfter test
