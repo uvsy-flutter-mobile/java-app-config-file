@@ -1,23 +1,27 @@
 package com.universy;
 
-import com.amazonaws.services.s3.model.AmazonS3Exception;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.universy.environment.Environment;
 import com.universy.files.ConfigFileWriter;
-import com.universy.s3.ConfigFileFetcher;
+import com.universy.parameters.Parameters;
+import com.universy.ssm.SSMParametersProvider;
 
 import java.io.IOException;
-
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
-
-        if(args.length != 1) {
-            System.out.println("You must specify the stage and only the stage!");
-            return;
-        }
-
-        String stage = args[0];
-
+        Stream.of(args).forEach(System.out::println);
         try {
+
+            String profile = Environment.getProfile();
+            String region = Environment.getRegion();
+            String stage = Environment.getStage();
+
+            System.out.println(region);
+            System.out.println(profile);
+            System.out.println(stage);
 
             String userName = System.getProperty("user.name");
             String userDir = System.getProperty("user.dir");
@@ -26,24 +30,26 @@ public class Main {
             System.out.println("We are on: " + userDir);
 
             System.out.println("Stage you asked: " + stage);
-            System.out.println("Fetching config from S3 Bucket!");
-            ConfigFileFetcher fileFetcher = new ConfigFileFetcher(stage);
-            String content = fileFetcher.fetch();
+            System.out.println("Fetching parameters from ssm!");
 
-            if(content.isEmpty()){
-                System.out.println("Config file is empty! What? Contact your AWS Admin. :(");
-            } else{
-                System.out.println("File retrieved successfully.");
-                System.out.println("Writing file to config folder. Almost done! :)");
-                ConfigFileWriter writer = new ConfigFileWriter(content);
-                writer.write();
-                System.out.println(String.format("We're done here. Thank you %s!", userName));
+            SSMParametersProvider ssmParametersProvider = new SSMParametersProvider(stage, region, profile);
+            Parameters parameters = ssmParametersProvider.getParameters();
 
-            }
+            System.out.println("Parameters fetched successfully.");
+            System.out.println("Converting to json format.");
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(parameters);
+
+            System.out.println("Writing file to config folder. Almost done! :)");
+            ConfigFileWriter writer = new ConfigFileWriter(content);
+            writer.write();
+            System.out.println(String.format("We're done here. Thank you %s!", userName));
         } catch (IOException e) {
             System.out.println(String.format("There was an error: %s. Sorry!", e.getMessage()));
-        } catch (AmazonS3Exception e){
-            System.out.println(String.format("There was an error with AWS: %s.", e.getMessage()));
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println(String.format("There was an error: %s.", e.getMessage()));
             System.out.println("Possible problems: \n" +
                     "- Incorrect credentials in .aws/credentials. \n" +
                     "- Incorrect configuration in .aws/config. \n" +
