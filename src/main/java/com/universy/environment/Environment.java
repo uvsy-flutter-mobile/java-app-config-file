@@ -23,4 +23,14 @@ public class Environment {
         return Optional.ofNullable(System.getProperty("stage"))
                 .orElseThrow(CorruptEnvironmentException::new);
     }
+
+    public static String getUserName(){
+        return Optional.ofNullable(System.getProperty("user.name"))
+                .orElse("user");
+    }
+
+    public static String getUserDir(){
+        return Optional.ofNullable(System.getProperty("user.dir"))
+                .orElseThrow(CorruptEnvironmentException::new);
+    }
 }

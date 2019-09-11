@@ -16,8 +16,8 @@ public class Main {
             String profile = Environment.getProfile();
             String region = Environment.getRegion();
             String stage = Environment.getStage();
-            String userName = System.getProperty("user.name");
-            String userDir = System.getProperty("user.dir");
+            String userName = Environment.getUserName();
+            String userDir = Environment.getUserDir();
 
             System.out.println(String.format("Hello %s!", userName));
             System.out.println("We are on: " + userDir);
