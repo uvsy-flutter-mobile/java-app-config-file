@@ -8,7 +8,6 @@ import com.universy.parameters.Parameters;
 import com.universy.ssm.SSMParametersProvider;
 
 import java.io.IOException;
-import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
