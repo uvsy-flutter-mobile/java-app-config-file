@@ -32,7 +32,7 @@ public class SSMParametersProvider implements ParametersProvider {
 
         Parameters parameters = new Parameters(stage);
         parameters.getFillers().forEach(parameterFiller -> Optional.of(parameterFiller)
-                .map(ParameterFiller::getParamPath)
+                .map(ParameterFiller::getParamName)
                 .map(parameterMap::get)
                 .ifPresent(parameterFiller.getParamConsumer()));
         return parameters;

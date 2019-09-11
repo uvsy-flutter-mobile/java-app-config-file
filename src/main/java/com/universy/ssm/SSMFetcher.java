@@ -5,7 +5,6 @@ import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClient;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.universy.parameters.ParameterName;
 
 import java.util.List;

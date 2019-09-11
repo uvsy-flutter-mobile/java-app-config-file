@@ -12,17 +12,11 @@ import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
-        Stream.of(args).forEach(System.out::println);
         try {
 
             String profile = Environment.getProfile();
             String region = Environment.getRegion();
             String stage = Environment.getStage();
-
-            System.out.println(region);
-            System.out.println(profile);
-            System.out.println(stage);
-
             String userName = System.getProperty("user.name");
             String userDir = System.getProperty("user.dir");
 
@@ -42,8 +36,10 @@ public class Main {
             String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(parameters);
 
             System.out.println("Writing file to config folder. Almost done! :)");
+
             ConfigFileWriter writer = new ConfigFileWriter(content);
             writer.write();
+
             System.out.println(String.format("We're done here. Thank you %s!", userName));
         } catch (IOException e) {
             System.out.println(String.format("There was an error: %s. Sorry!", e.getMessage()));
