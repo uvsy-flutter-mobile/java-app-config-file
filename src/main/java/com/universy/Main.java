@@ -1,53 +1,68 @@
 package com.universy;
 
-import com.amazonaws.services.s3.model.AmazonS3Exception;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.universy.environment.Environment;
 import com.universy.files.ConfigFileWriter;
-import com.universy.s3.ConfigFileFetcher;
+import com.universy.parameters.Parameters;
+import com.universy.parameters.analyzer.AnalyzerResult;
+import com.universy.parameters.analyzer.ParametersAnalyzer;
+import com.universy.ssm.SSMParametersProvider;
 
 import java.io.IOException;
 
-
 public class Main {
     public static void main(String[] args) {
-
-        if(args.length != 1) {
-            System.out.println("You must specify the stage and only the stage!");
-            return;
-        }
-
-        String stage = args[0];
-
         try {
 
-            String userName = System.getProperty("user.name");
-            String userDir = System.getProperty("user.dir");
+            String profile = Environment.getProfile();
+            String region = Environment.getRegion();
+            String stage = Environment.getStage();
+            String userName = Environment.getUserName();
+            String userDir = Environment.getUserDir();
 
-            System.out.println(String.format("Hello %s!", userName));
+            System.out.printf("Hello %s!\n", userName);
             System.out.println("We are on: " + userDir);
 
             System.out.println("Stage you asked: " + stage);
-            System.out.println("Fetching config from S3 Bucket!");
-            ConfigFileFetcher fileFetcher = new ConfigFileFetcher(stage);
-            String content = fileFetcher.fetch();
+            System.out.println("Fetching parameters from ssm!");
 
-            if(content.isEmpty()){
-                System.out.println("Config file is empty! What? Contact your AWS Admin. :(");
-            } else{
-                System.out.println("File retrieved successfully.");
+            SSMParametersProvider ssmParametersProvider = new SSMParametersProvider(stage, region, profile);
+            Parameters parameters = ssmParametersProvider.getParameters();
+
+            System.out.print("Analyzing result...");
+
+            ParametersAnalyzer analyzer = new ParametersAnalyzer();
+            AnalyzerResult analyzerResult = analyzer.analyze(parameters);
+
+            if(analyzerResult.isValid()){
+                System.out.println("Parameters fetched successfully.");
+                System.out.println("Converting to json format.");
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(parameters);
+
                 System.out.println("Writing file to config folder. Almost done! :)");
+
                 ConfigFileWriter writer = new ConfigFileWriter(content);
                 writer.write();
                 System.out.println(String.format("We're done here. Thank you %s!", userName));
-
+            } else {
+                System.out.println("Parameters were not fetched successfully");
+                System.out.printf("For stage [%s] in region [%s] with profile [%s], " +
+                                "this are the missing parameters: \n\n",
+                        stage, region, profile);
+                analyzerResult.getMissingParameters().forEach(System.out::println);
             }
+
+
         } catch (IOException e) {
             System.out.println(String.format("There was an error: %s. Sorry!", e.getMessage()));
-        } catch (AmazonS3Exception e){
-            System.out.println(String.format("There was an error with AWS: %s.", e.getMessage()));
+        } catch (Exception e){
+            System.out.println(String.format("There was an error: %s.", e.getMessage()));
             System.out.println("Possible problems: \n" +
-                    "- Incorrect credentials in .aws/credentials. \n" +
-                    "- Incorrect configuration in .aws/config. \n" +
-                    "- Stage is not correct.");
+                    "- Incorrect credentials in ~/.aws/credentials. \n" +
+                    "- Incorrect configuration in ~/.aws/config.");
          }
     }
 }
