@@ -90,12 +90,12 @@ public class Parameters {
     @JsonIgnore
     public List<ParameterFiller> getFillers() {
         return Arrays.asList(
-                new ParameterFiller(ParameterName.ACCOUNT_ENDPOINT.format(stage), this::setAccountEndpoint),
-                new ParameterFiller(ParameterName.ACCOUNT_KEY.format(stage), this::setAccountKey),
-                new ParameterFiller(ParameterName.INSTITUTION_ENDPOINT.format(stage), this::setInstitutionEndpoint),
-                new ParameterFiller(ParameterName.INSTITUTION_KEY.format(stage), this::setInstitutionKey),
-                new ParameterFiller(ParameterName.STUDENT_ENDPOINT.format(stage), this::setStudentEndpoint),
-                new ParameterFiller(ParameterName.STUDENT_KEY.format(stage), this::setStudentKey)
+                new ParameterFiller(Parameter.ACCOUNT_ENDPOINT.format(stage), this::setAccountEndpoint),
+                new ParameterFiller(Parameter.ACCOUNT_KEY.format(stage), this::setAccountKey),
+                new ParameterFiller(Parameter.INSTITUTION_ENDPOINT.format(stage), this::setInstitutionEndpoint),
+                new ParameterFiller(Parameter.INSTITUTION_KEY.format(stage), this::setInstitutionKey),
+                new ParameterFiller(Parameter.STUDENT_ENDPOINT.format(stage), this::setStudentEndpoint),
+                new ParameterFiller(Parameter.STUDENT_KEY.format(stage), this::setStudentKey)
         );
     }
 }

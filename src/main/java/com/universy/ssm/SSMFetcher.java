@@ -5,7 +5,7 @@ import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClient;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
-import com.universy.parameters.ParameterName;
+import com.universy.parameters.Parameter;
 
 import java.util.List;
 
@@ -32,6 +32,6 @@ public class SSMFetcher {
     }
 
     private List<String> getParameters(String stage) {
-        return ParameterName.getFormattedPaths(stage);
+        return Parameter.getFormattedPaths(stage);
     }
 }

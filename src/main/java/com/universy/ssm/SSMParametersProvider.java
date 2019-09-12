@@ -39,9 +39,11 @@ public class SSMParametersProvider implements ParametersProvider {
     }
 
     private Map<String, String> getParameterValueMap(GetParametersResult getParametersResult) {
-        return getParametersResult.getParameters().stream().collect(Collectors.toMap(
-                Parameter::getName,
-                Parameter::getValue
-        ));
+        return getParametersResult.getParameters()
+                .stream()
+                .collect(Collectors.toMap(
+                        Parameter::getName,
+                        Parameter::getValue
+                ));
     }
 }
