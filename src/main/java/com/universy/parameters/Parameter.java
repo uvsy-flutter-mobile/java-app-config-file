@@ -6,10 +6,6 @@ import java.util.stream.Stream;
 
 public enum Parameter {
 
-    ACCOUNT_ENDPOINT("/%s/apigw/api-account/endpoint", "API Account Endpoint"),
-    ACCOUNT_KEY("/%s/apigw/api-account/key", "API Account Key"),
-    INSTITUTION_ENDPOINT("/%s/apigw/api-institution/endpoint", "API Institution Endpoint"),
-    INSTITUTION_KEY("/%s/apigw/api-institution/key", "API Institution Key"),
     STUDENT_ENDPOINT("/%s/apigw/api-student/endpoint", "API Student Endpoint"),
     STUDENT_KEY("/%s/apigw/api-student/key", "API Student Key");
 
